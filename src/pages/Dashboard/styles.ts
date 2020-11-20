@@ -3,6 +3,7 @@ import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 
 export const Container = styled.View`
   flex: 1;
+  background: #fff;
 `;
 
 export const Header = styled.View`
@@ -34,7 +35,6 @@ export const UserAvatar = styled.Image`
 `;
 
 export const EventsContainer = styled.View`
-  background: #fff;
   padding: 24px;
 
   align-items: center;
@@ -72,16 +72,4 @@ export const DoseNumber = styled.Text`
 
 export const EventDetails = styled.Text`
   margin-top: 20px;
-`;
-
-export const MenusContainer = styled.View`
-  background: #fff;
-  width: 100%;
-  align-items: center;
-  padding: 24px;
-`;
-
-export const MenusContainerTitle = styled.Text`
-  font-size: 20px;
-  font-weight: bold;
 `;

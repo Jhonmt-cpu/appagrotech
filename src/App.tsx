@@ -1,16 +1,21 @@
 import 'react-native-gesture-handler';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import SplashScreen from 'react-native-splash-screen';
 
 import AppProvider from './hooks';
 
 import Routes from './routes';
 
 const App: React.FC = () => {
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
+
   const deepLinking = {
-    prefixes: ['http://192.168.15.29:3000', 'appagrotech://'],
+    prefixes: ['https://reactdeploy.devjhon.com', 'appagrotech://'],
     config: {
       screens: {
         ResetPassword: 'resetpassword/:token',

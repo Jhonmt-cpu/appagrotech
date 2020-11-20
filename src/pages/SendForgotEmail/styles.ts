@@ -1,6 +1,8 @@
+import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import styled from 'styled-components/native';
 
 export const Container = styled.View`
+  margin-top: ${getStatusBarHeight() + 20}px;
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -11,6 +13,7 @@ export const LogoImg = styled.Image`
   margin-bottom: 50px;
   width: 200px;
   height: 200px;
+  align-self: center;
 `;
 
 export const Message = styled.Text`

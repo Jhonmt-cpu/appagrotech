@@ -36,7 +36,7 @@ export const SubTitle = styled.Text`
 export const TextInput = styled.TextInput`
   background-color: #fff;
   border-radius: 20px;
-  width: 250px;
+  width: 78%;
   height: 50px;
   border-color: #74d469;
   border-width: 2px;

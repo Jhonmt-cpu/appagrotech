@@ -28,7 +28,7 @@ const Dropdown: React.FC<DatePickerProps> = ({
 }) => {
   const datePickerElementRef = useRef<any>(null);
 
-  const [selectedDate, setSelectedDate] = useState();
+  const [selectedDate, setSelectedDate] = useState('');
 
   const todayDate = useCallback(() => {
     const today = new Date();
@@ -74,6 +74,7 @@ const Dropdown: React.FC<DatePickerProps> = ({
           date={selectedDate}
           format="DD-MM-YYYY"
           onDateChange={handleDateChanged}
+          {...rest}
         />
       </DatePickerContainer>
     </Container>

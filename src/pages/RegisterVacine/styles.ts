@@ -7,7 +7,6 @@ export const Container = styled.View`
 `;
 
 export const Form = styled(Unform)`
-  margin-top: 35px;
   padding: 24px;
   width: 100%;
 `;
@@ -15,4 +14,15 @@ export const Form = styled(Unform)`
 export const DosesContainer = styled.View`
   flex-direction: row;
   width: 100%;
+`;
+
+export const FormSubtitles = styled.Text`
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 24px;
+`;
+
+export const AnimalsToBeSelectedContainer = styled.View`
+  margin-bottom: 20px;
 `;

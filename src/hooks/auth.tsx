@@ -34,10 +34,11 @@ interface UpdateProfileCredentials {
 
 interface AuthContextData {
   user: User;
+  token: string;
   loading: boolean;
   signIn(credentials: SigninCredentials): Promise<void>;
   signOut(): void;
-  updateProfile(credentials: UpdateProfileCredentials): Promise<void>;
+  updateUser(user: User): Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -83,28 +84,16 @@ const AuthProvider: React.FC = ({ children }) => {
     setData({ token, user });
   }, []);
 
-  const updateProfile = useCallback(
-    async ({ name, email, old_password, password }) => {
-      const response = await api.put<User>('profile', {
-        name,
-        email,
-        old_password,
-        password,
-      });
-
-      const user = response.data;
-
+  const updateUser = useCallback(
+    async (user: User) => {
       await AsyncStorage.setItem('@Agrotech:user', JSON.stringify(user));
 
-      const token = await AsyncStorage.getItem('@Agrotech:token');
-
-      if (!token) {
-        return;
-      }
-
-      setData({ token, user });
+      setData({
+        token: data.token,
+        user,
+      });
     },
-    [],
+    [setData, data.token],
   );
 
   const signOut = useCallback(async () => {
@@ -115,7 +104,14 @@ const AuthProvider: React.FC = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user: data.user, loading, signIn, signOut, updateProfile }}
+      value={{
+        token: data.token,
+        user: data.user,
+        loading,
+        signIn,
+        signOut,
+        updateUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

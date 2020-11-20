@@ -5,6 +5,7 @@ import { Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import Icon from 'react-native-vector-icons/Feather';
+import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import { FormHandles } from '@unform/core';
 import DatePicker from '../../components/DatePicker';
 import Dropdown from '../../components/Dropdown';
@@ -32,7 +33,7 @@ import {
 import api from '../../services/api';
 import Button from '../../components/Button';
 
-interface IAnimals {
+export interface IAnimals {
   id: string;
   nome_ou_brinco: string;
   raca: string;
@@ -77,10 +78,6 @@ const AnimalsList: React.FC = () => {
     setShowForm(state => !state);
   }, []);
 
-  const navigateBack = useCallback(() => {
-    goBack();
-  }, [goBack]);
-
   const handleNavigateToProfile = useCallback(() => {
     navigate('Profile');
   }, [navigate]);
@@ -124,14 +121,14 @@ const AnimalsList: React.FC = () => {
       >
         <Container>
           <Header>
-            <BackButton onPress={navigateBack}>
-              <Icon name="chevron-left" size={40} color="#000" />
-            </BackButton>
-
             <HeaderTitle>Gado cadastrado</HeaderTitle>
 
             <ProfileButton onPress={handleNavigateToProfile}>
-              <UserAvatar source={{ uri: user.avatar_url }} />
+              {user.avatar_url ? (
+                <UserAvatar source={{ uri: user.avatar_url }} />
+              ) : (
+                <Icon5 name="user-circle" size={56} />
+              )}
             </ProfileButton>
           </Header>
           <ScrollView>

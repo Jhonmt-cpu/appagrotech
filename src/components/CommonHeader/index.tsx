@@ -6,9 +6,10 @@ import { Container, BackButton, HeaderTitle } from './styles';
 
 interface HeaderProps {
   title: string;
+  hasBackIcon?: boolean;
 }
 
-const CommonHeader: React.FC<HeaderProps> = ({ title }) => {
+const CommonHeader: React.FC<HeaderProps> = ({ title, hasBackIcon }) => {
   const { goBack } = useNavigation();
 
   const handleNavigateBack = useCallback(() => {
@@ -16,10 +17,12 @@ const CommonHeader: React.FC<HeaderProps> = ({ title }) => {
   }, [goBack]);
 
   return (
-    <Container>
-      <BackButton onPress={handleNavigateBack}>
-        <Icon name="chevron-left" size={40} color="#000" />
-      </BackButton>
+    <Container hasBackIcon={!!hasBackIcon}>
+      {hasBackIcon && (
+        <BackButton onPress={handleNavigateBack}>
+          <Icon name="chevron-left" size={40} color="#000" />
+        </BackButton>
+      )}
 
       <HeaderTitle>{title}</HeaderTitle>
     </Container>

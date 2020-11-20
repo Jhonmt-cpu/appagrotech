@@ -3,6 +3,8 @@ import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
 import '../../utils/localeCalendarConfig';
 
 import { useAuth } from '../../hooks/auth';
@@ -22,11 +24,7 @@ import {
   EventName,
   DoseNumber,
   EventDetails,
-  MenusContainer,
-  MenusContainerTitle,
 } from './styles';
-import Menu from '../../components/Menu';
-import Button from '../../components/Button';
 
 interface IVacinesEventForCalendar {
   [key: string]: { marked: boolean; dotColor: string };
@@ -47,7 +45,7 @@ interface IVacinesEvents {
 
 const Dashboard: React.FC = () => {
   const { navigate, addListener } = useNavigation();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
 
   const [vacinesDays, setVacinesDays] = useState<IVacinesEventForCalendar>(
     {} as IVacinesEventForCalendar,
@@ -58,8 +56,8 @@ const Dashboard: React.FC = () => {
   const [dateString, setDateString] = useState(() => {
     const today = new Date();
     const year = String(today.getFullYear()).padStart(2, '0');
-    const month = String(today.getMonth()).padStart(2, '0');
-    const day = today.getDate();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
 
     return `${day}/${month}/${year}`;
   });
@@ -112,18 +110,6 @@ const Dashboard: React.FC = () => {
     navigate('Profile');
   }, [navigate]);
 
-  const handleNavigateToAnimalsList = useCallback(() => {
-    navigate('AnimalsList');
-  }, [navigate]);
-
-  const handleNavigateToRegisterVacine = useCallback(() => {
-    navigate('RegisterVacine');
-  }, [navigate]);
-
-  const handleSignOut = useCallback(() => {
-    signOut();
-  }, [signOut]);
-
   return (
     <Container>
       <Header>
@@ -134,7 +120,11 @@ const Dashboard: React.FC = () => {
         </HeaderTitle>
 
         <ProfileButton onPress={handleNavigateToProfile}>
-          <UserAvatar source={{ uri: user.avatar_url }} />
+          {user.avatar_url ? (
+            <UserAvatar source={{ uri: user.avatar_url }} />
+          ) : (
+            <Icon name="user-circle" size={56} />
+          )}
         </ProfileButton>
       </Header>
       <KeyboardAvoidingView
@@ -165,20 +155,6 @@ const Dashboard: React.FC = () => {
               </Event>
             ))}
           </EventsContainer>
-
-          <MenusContainer>
-            <MenusContainerTitle>Menus do App</MenusContainerTitle>
-
-            <Button onPress={handleNavigateToAnimalsList}>
-              Manejo de Gado
-            </Button>
-
-            <Button onPress={handleNavigateToRegisterVacine}>
-              Registro de vacinas
-            </Button>
-
-            <Button onPress={handleSignOut}>Sair da Aplicação</Button>
-          </MenusContainer>
         </ScrollView>
       </KeyboardAvoidingView>
     </Container>

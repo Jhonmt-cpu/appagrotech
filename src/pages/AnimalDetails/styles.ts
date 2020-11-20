@@ -70,6 +70,36 @@ export const CarenciaText = styled.Text<CarenciaContainer>`
     `}
 `;
 
+export const AnotacoesContainer = styled.View`
+  align-items: center;
+  margin-bottom: 20px;
+  border: #74d469 solid 1px;
+  padding: 20px;
+  border-radius: 20px;
+`;
+
+export const AnotacoesText = styled.Text`
+  color: #74d469;
+  font-weight: bold;
+  font-size: 14px;
+`;
+
+export const AddDoencaContainer = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-bottom: 20px;
+  border: #74d469 solid 1px;
+  padding: 20px;
+  border-radius: 20px;
+`;
+
+export const AddDoencaText = styled.Text`
+  color: #74d469;
+  font-weight: bold;
+  font-size: 14px;
+`;
+
 export const VeterinaryTableContainer = styled.View`
   align-items: center;
   width: 100%;
@@ -93,6 +123,7 @@ export const VeterinaryTable = styled.View`
 
 export const Item = styled.TouchableOpacity`
   width: 100%;
+  height: 80px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -115,7 +146,7 @@ export const Date = styled.Text`
   color: #74d469;
 `;
 
-export const RegisterDoencaButton = styled.TouchableOpacity`
+export const EditAnimalButton = styled.TouchableOpacity`
   position: absolute;
   left: 0;
   bottom: 0;
@@ -130,6 +161,6 @@ export const RegisterDoencaButton = styled.TouchableOpacity`
   flex-direction: row;
 `;
 
-export const RegisterDoencaButtonText = styled.Text`
+export const EditAnimalButtonText = styled.Text`
   font-size: 18px;
 `;

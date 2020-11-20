@@ -1,8 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
+import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 
 import CommonHeader from '../../components/CommonHeader';
@@ -10,6 +11,7 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 
 import api from '../../services/api';
+import getValidationErrors from '../../utils/getValidationErrors';
 
 import { Container, DosesContainer, Form } from './styles';
 
@@ -24,6 +26,7 @@ interface RegisterDoencaForm {
 
 interface RouteParams {
   animal_id: string;
+  nome_ou_brinco: string;
 }
 
 const RegisterDoenca: React.FC = () => {
@@ -31,16 +34,26 @@ const RegisterDoenca: React.FC = () => {
 
   const formRef = useRef<FormHandles>(null);
 
+  const { navigate } = useNavigation();
   const route = useRoute();
 
-  const { animal_id } = route.params as RouteParams;
+  const { animal_id, nome_ou_brinco } = route.params as RouteParams;
 
   const handleSubmit = useCallback(
     async (data: RegisterDoencaForm) => {
       try {
         setIsLoading(true);
 
-        formRef.current?.setErrors({});
+        const schema = Yup.object().shape({
+          nome_doenca: Yup.string().required('Nome da doença é obrigatório'),
+          periodo_carencia: Yup.string().required(
+            'Período de carência obrigatório (Digite 0 caso não haja período de carência)',
+          ),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
 
         await api.post('doencas', { ...data, animal_id });
 
@@ -48,16 +61,21 @@ const RegisterDoenca: React.FC = () => {
 
         Alert.alert('Doença cadastrada com sucesso');
 
-        setIsLoading(false);
+        navigate('AnimalDetails');
       } catch (err) {
-        console.log(err);
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
 
+          Alert.alert('Doença não cadastrada', errors[0]);
+
+          return;
+        }
         Alert.alert('Doença não cadastrada', 'Tente Novamente mais tarde');
-
+      } finally {
         setIsLoading(false);
       }
     },
-    [animal_id],
+    [animal_id, navigate],
   );
 
   return (
@@ -68,7 +86,10 @@ const RegisterDoenca: React.FC = () => {
     >
       <ScrollView>
         <Container>
-          <CommonHeader title="Cadastro de doença" />
+          <CommonHeader
+            hasBackIcon
+            title={`Cadastro de doença para ${nome_ou_brinco}`}
+          />
 
           <Form ref={formRef} onSubmit={handleSubmit}>
             <DosesContainer>

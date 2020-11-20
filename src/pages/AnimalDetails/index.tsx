@@ -15,6 +15,10 @@ import {
   DataTwo,
   CarenciaContainer,
   CarenciaText,
+  AnotacoesContainer,
+  AnotacoesText,
+  AddDoencaContainer,
+  AddDoencaText,
   VeterinaryTableContainer,
   VeterinaryTableHeader,
   VeterinaryTableTitle,
@@ -23,8 +27,8 @@ import {
   ItemInfo,
   Info,
   Date,
-  RegisterDoencaButton,
-  RegisterDoencaButtonText,
+  EditAnimalButton,
+  EditAnimalButtonText,
 } from './styles';
 import api from '../../services/api';
 
@@ -37,13 +41,19 @@ interface IAnimal {
   sexo: string;
   cidade: string;
   estado: string;
+  anotacoes: string;
   carencia_state: boolean;
+}
+
+interface INavigateToVacineOrDeseaseDetails {
+  id: string;
+  type: 'Vacina' | 'Doença';
 }
 
 interface IVeterinaryTableItem {
   id: string;
   name: string;
-  type: string;
+  type: 'Vacina' | 'Doença';
   date: string;
 }
 
@@ -66,7 +76,7 @@ const AnimalDetails: React.FC = () => {
   >([]);
 
   useEffect(() => {
-    addListener('focus', _ => {
+    addListener('focus', () => {
       setReloadPage(state => !state);
     });
   }, [addListener]);
@@ -77,17 +87,38 @@ const AnimalDetails: React.FC = () => {
     });
 
     api
-      .get(
-        `/veterinary-table?animal_id=${animal_id}&birth_animal_date=${animal_birth_date}`,
-      )
+      .get(`/veterinary-table`, {
+        params: {
+          animal_id,
+          birth_animal_date: animal_birth_date,
+        },
+      })
       .then(response => {
         setVeterinaryTable(response.data);
       });
   }, [animal_id, animal_birth_date, reloadPage]);
 
   const handleNavigateToRegisterDesease = useCallback(() => {
-    navigate('RegisterDoenca', { animal_id: animal.id });
-  }, [navigate, animal.id]);
+    navigate('RegisterDoenca', {
+      animal_id: animal.id,
+      nome_ou_brinco: animal.nome_ou_brinco,
+    });
+  }, [navigate, animal]);
+
+  const handleNavigateToEditAnimal = useCallback(() => {
+    navigate('EditAnimal', { animal });
+  }, [navigate, animal]);
+
+  const handleNavigateToVacineOrDeseaseDetails = useCallback(
+    ({ id, type }: INavigateToVacineOrDeseaseDetails) => {
+      if (type === 'Vacina') {
+        navigate('VacineDetails', { vacine_id: id });
+      } else {
+        navigate('DoencaDetails', { doenca_id: id });
+      }
+    },
+    [navigate],
+  );
 
   return (
     <>
@@ -97,7 +128,10 @@ const AnimalDetails: React.FC = () => {
         enabled
       >
         <ScrollView>
-          <CommonHeader title={`Detalhes de ${animal.nome_ou_brinco}`} />
+          <CommonHeader
+            hasBackIcon
+            title={`Detalhes de ${animal.nome_ou_brinco}`}
+          />
           <Container>
             <InfoContainer>
               <Line>
@@ -142,6 +176,17 @@ const AnimalDetails: React.FC = () => {
                     : 'Bovino não está em período de carencia'}
                 </CarenciaText>
               </CarenciaContainer>
+
+              <AnotacoesContainer>
+                <AnotacoesText>
+                  {animal.anotacoes ? animal.anotacoes : 'Animal sem anotações'}
+                </AnotacoesText>
+              </AnotacoesContainer>
+
+              <AddDoencaContainer onPress={handleNavigateToRegisterDesease}>
+                <Icon name="plus" size={25} color="#74d469" />
+                <AddDoencaText>Registrar Doença no animal</AddDoencaText>
+              </AddDoencaContainer>
             </InfoContainer>
             <VeterinaryTableContainer>
               <VeterinaryTable>
@@ -149,7 +194,15 @@ const AnimalDetails: React.FC = () => {
                   <VeterinaryTableTitle>Ficha Veterinária</VeterinaryTableTitle>
                 </VeterinaryTableHeader>
                 {veterinaryTable.map(item => (
-                  <Item key={item.id}>
+                  <Item
+                    key={item.id}
+                    onPress={() =>
+                      handleNavigateToVacineOrDeseaseDetails({
+                        id: item.id,
+                        type: item.type,
+                      })
+                    }
+                  >
                     <ItemInfo>
                       <Info>{`${item.name}`}</Info>
                       <Date>{item.date.split('-').reverse().join('/')}</Date>
@@ -163,11 +216,9 @@ const AnimalDetails: React.FC = () => {
         </ScrollView>
       </KeyboardAvoidingView>
 
-      <RegisterDoencaButton onPress={handleNavigateToRegisterDesease}>
-        <RegisterDoencaButtonText>
-          Registrar doença no bovino
-        </RegisterDoencaButtonText>
-      </RegisterDoencaButton>
+      <EditAnimalButton onPress={handleNavigateToEditAnimal}>
+        <EditAnimalButtonText>Editar Bovino</EditAnimalButtonText>
+      </EditAnimalButton>
     </>
   );
 };

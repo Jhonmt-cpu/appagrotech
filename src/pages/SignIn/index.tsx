@@ -67,10 +67,7 @@ const SignIn: React.FC = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         enabled
       >
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ flex: 1 }}
-        >
+        <ScrollView keyboardShouldPersistTaps="handled">
           <Container>
             <Image style={{ width: 200, height: 200 }} source={logoImg} />
 
@@ -89,7 +86,6 @@ const SignIn: React.FC = () => {
                 keyboardType="email-address"
                 name="email"
                 title="Email"
-                style={{ width: 260 }}
               />
 
               <Input
@@ -98,7 +94,6 @@ const SignIn: React.FC = () => {
                 secureTextEntry
                 name="password"
                 title="Senha"
-                style={{ width: 260 }}
               />
 
               <Button

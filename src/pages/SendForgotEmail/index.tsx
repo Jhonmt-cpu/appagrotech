@@ -3,7 +3,8 @@ import React, { useCallback, useRef, useState } from 'react';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 
-import { Alert } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
@@ -41,23 +42,37 @@ const SendForgotEmail: React.FC = () => {
 
   return (
     <Container>
-      <LogoImg source={logoImg} />
-      <Message>Digite o seu email cadastrado para recuperar sua senha</Message>
-      <Form onSubmit={handleSendEmail} ref={formRef} style={{ width: '100%' }}>
-        <Input
-          name="email"
-          autoCapitalize="none"
-          keyboardType="email-address"
-          style={{ width: '100%' }}
-        />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        enabled
+      >
+        <ScrollView>
+          <LogoImg source={logoImg} />
+          <Message>
+            Digite o seu email cadastrado para recuperar sua senha
+          </Message>
+          <Form
+            onSubmit={handleSendEmail}
+            ref={formRef}
+            style={{ width: '100%' }}
+          >
+            <Input
+              name="email"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              style={{ width: '100%' }}
+            />
 
-        <Button
-          isLoading={isLoading}
-          onPress={() => formRef.current?.submitForm()}
-        >
-          Enviar
-        </Button>
-      </Form>
+            <Button
+              isLoading={isLoading}
+              onPress={() => formRef.current?.submitForm()}
+            >
+              Enviar
+            </Button>
+          </Form>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Container>
   );
 };

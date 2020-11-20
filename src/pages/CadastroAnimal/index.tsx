@@ -11,15 +11,18 @@ import { useNavigation } from '@react-navigation/native';
 
 import { FormHandles } from '@unform/core';
 
+import * as Yup from 'yup';
 import api from '../../services/api';
 
+import getValidationErrors from '../../utils/getValidationErrors';
+
+import CommonHeader from '../../components/CommonHeader';
 import Input from '../../components/Input';
 import Dropdown from '../../components/Dropdown';
 import Button from '../../components/Button';
 import DatePicker from '../../components/DatePicker';
 
-import { Container, Header, BackButton, HeaderTitle, Form } from './styles';
-import CommonHeader from '../../components/CommonHeader';
+import { Container, Form } from './styles';
 
 interface CreateAnimalFormData {
   nome_ou_brinco: string;
@@ -39,40 +42,46 @@ interface IAnimals {
 }
 
 const CadastroAnimal: React.FC = () => {
-  const [animals, setAnimals] = useState<IAnimals[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const formRef = useRef<FormHandles>(null);
-
-  const { navigate } = useNavigation();
 
   const handleSubmit = useCallback(async (data: CreateAnimalFormData) => {
     try {
       setIsLoading(true);
 
-      const newAnimal = await api.post<IAnimals>('animals', data);
+      const schema = Yup.object().shape({
+        nome_ou_brinco: Yup.string().required('Nome/Brinco obrigatório'),
+        peso: Yup.string().required('Peso obrigatório'),
+        cidade: Yup.string().required('Cidade obrigatória'),
+      });
 
-      setAnimals(state => [...state, newAnimal.data]);
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+
+      await api.post<IAnimals>('animals', data);
 
       Alert.alert('Cadastro realizado com sucesso');
 
       formRef.current?.clearField('peso');
       formRef.current?.clearField('cidade');
       formRef.current?.clearField('nome_ou_brinco');
-
-      setIsLoading(false);
     } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+
+        Alert.alert('Animal não cadastrado', errors[0]);
+
+        return;
+      }
       Alert.alert(
         'Cadastro não foi realizado, cheque as credenciais e tente novamente',
       );
-
+    } finally {
       setIsLoading(false);
     }
   }, []);
-
-  const navigateBack = useCallback(() => {
-    navigate('AnimalsList', { newAnimals: animals, reload: true });
-  }, [navigate, animals]);
 
   return (
     <KeyboardAvoidingView
@@ -80,16 +89,17 @@ const CadastroAnimal: React.FC = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       enabled
     >
-      <ScrollView
-        contentContainerStyle={{ flex: 1 }}
-        keyboardShouldPersistTaps="always"
-      >
+      <ScrollView>
         <StatusBar backgroundColor="#74d469" />
         <Container>
-          <CommonHeader title="Cadastro de animal" />
+          <CommonHeader hasBackIcon title="Cadastro de animal" />
 
           <Form ref={formRef} onSubmit={handleSubmit}>
-            <Input title="Brinco/Nome" name="nome_ou_brinco" />
+            <Input
+              name="nome_ou_brinco"
+              placeholder="Nome ou brinco do animal"
+              style={{ width: '100%' }}
+            />
 
             <Dropdown
               name="raca"
@@ -105,7 +115,12 @@ const CadastroAnimal: React.FC = () => {
               ]}
             />
 
-            <Input title="Peso (KG)" name="peso" keyboardType="numeric" />
+            <Input
+              name="peso"
+              keyboardType="numeric"
+              placeholder="Peso em quilos do animal"
+              style={{ width: '100%' }}
+            />
 
             <Dropdown
               title="Estado"
@@ -153,9 +168,11 @@ const CadastroAnimal: React.FC = () => {
               ]}
             />
 
-            <Input title="Cidade" name="cidade" />
-
-            <DatePicker name="nascimento" title="Nascimento" />
+            <Input
+              name="cidade"
+              placeholder="Cidade de origen do animal"
+              style={{ width: '100%' }}
+            />
 
             <Dropdown
               title="Sexo"
@@ -165,6 +182,8 @@ const CadastroAnimal: React.FC = () => {
                 { label: 'Macho', value: 'Macho' },
               ]}
             />
+
+            <DatePicker name="nascimento" title="Nascimento" />
 
             <Button
               isLoading={isLoading}

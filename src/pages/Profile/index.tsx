@@ -100,6 +100,9 @@ const Profile: React.FC = () => {
         cancelButtonTitle: 'Cancelar',
         takePhotoButtonTitle: 'Usar câmera',
         chooseFromLibraryButtonTitle: 'Escolha da Galeria',
+        maxWidth: 400,
+        maxHeight: 400,
+        quality: 1,
       },
       response => {
         if (response.didCancel) {
@@ -107,7 +110,9 @@ const Profile: React.FC = () => {
         }
 
         if (response.error) {
+          console.log(response.error);
           Alert.alert('Erro ao atualizar seu avatar');
+          return;
         }
 
         const data = new FormData();
@@ -115,19 +120,12 @@ const Profile: React.FC = () => {
         data.append('avatar', {
           type: 'image/jpeg',
           name: `${user.id}.jpg`,
-          uri: response.uri,
+          uri: `${response.uri}`,
         });
 
-        api
-          .put('/users/avatar', data, {
-            headers: {
-              'Content-type': 'multipart/form-data',
-              Accept: 'application/json',
-            },
-          })
-          .then(apiResponse => {
-            updateUser(apiResponse.data);
-          });
+        api.put('/users/avatar', data).then(apiResponse => {
+          updateUser(apiResponse.data);
+        });
       },
     );
   }, [updateUser, user.id]);

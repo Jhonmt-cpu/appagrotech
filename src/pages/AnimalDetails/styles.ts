@@ -1,8 +1,5 @@
 import { Platform } from 'react-native';
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
+import { getBottomSpace } from 'react-native-iphone-x-helper';
 import styled, { css } from 'styled-components/native';
 
 interface CarenciaContainer {

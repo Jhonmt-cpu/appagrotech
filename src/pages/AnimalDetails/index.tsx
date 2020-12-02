@@ -172,8 +172,8 @@ const AnimalDetails: React.FC = () => {
               <CarenciaContainer isInCarencia={animal.carencia_state}>
                 <CarenciaText isInCarencia={animal.carencia_state}>
                   {animal.carencia_state
-                    ? 'Bovino está em período de carencia'
-                    : 'Bovino não está em período de carencia'}
+                    ? 'Bovino está em período de carência'
+                    : 'Bovino não está em período de carência'}
                 </CarenciaText>
               </CarenciaContainer>
 
